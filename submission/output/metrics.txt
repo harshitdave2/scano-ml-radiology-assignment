@@ -1,0 +1,44 @@
+====================================================
+CHEST X-RAY CLASSIFICATION — FINAL METRICS
+Best Model: EfficientNet-B0 + Mixup + TTA
+====================================================
+
+EXPERIMENT PROGRESSION
+----------------------
+Exp 1 — Baseline CNN          : 85.00% acc | AUC 0.9392
+Exp 2 — EfficientNet frozen   : 84.38% acc | AUC 0.9677
+Exp 3 — EffNet + Mixup        : 91.25% acc | AUC 0.9719
+Exp 3 + TTA (t=0.50)          : 91.88% acc | AUC 0.9878
+FINAL (TTA + t=0.33)       : 94.38% acc | AUC 0.9878
+
+FINAL MODEL DETAILED METRICS
+-----------------------------
+Accuracy  : 94.38%
+AUC-ROC   : 0.9878
+Threshold : 0.33
+TTA views : 8
+
+              precision    recall  f1-score   support
+
+      normal       0.92      0.97      0.95        80
+   pneumonia       0.97      0.91      0.94        80
+
+    accuracy                           0.94       160
+   macro avg       0.95      0.94      0.94       160
+weighted avg       0.95      0.94      0.94       160
+
+
+TECHNIQUES
+----------
+- EfficientNet-B0 pretrained ImageNet (timm)
+- Head: 1280 → BN → Dropout → 256 → ReLU → BN → Dropout → 2
+- Partial unfreeze: last 3 MBConv block groups + conv_head + bn2
+- Differential LR: head=5e-4, backbone=5e-5
+- AdamW, weight_decay=1e-3
+- Linear warmup (3 epochs) + Cosine decay
+- Gradient clipping (max_norm=1.0)
+- Label smoothing (ε=0.1)
+- Mixup augmentation (α=0.2)
+- Test-time augmentation (8 views)
+- Threshold tuning (max macro-F1)
+====================================================
